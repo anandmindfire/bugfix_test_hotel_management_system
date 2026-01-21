@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hotel Management System</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+    .container { background: white; padding: 20px; max-width: 1100px; margin: auto; }
+    input, select { margin: 5px; padding: 6px; }
+    button { padding: 6px 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<h1>Hotel Management System</h1>
+
+<div class="container">
+  <input id="guest" placeholder="Guest Name">
+  <input id="contact" placeholder="Contact Number">
+  <input id="room" placeholder="Room Number">
+  
+  <select id="type">
+    <option value="">Room Type</option>
+    <option value="Single">Single</option>
+    <option value="Double">Double</option>
+    <option value="Deluxe">Deluxe</option>
+    <option value="Suite">Suite</option>
+  </select>
+
+  <input id="checkin" type="date">
+  <input id="checkout" type="date">
+  <input id="price" type="number" placeholder="Price per night">
+  <input id="guests" type="number" placeholder="No of Guests">
+
+  <button onclick="addBooking()">Add Booking</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Guest</th>
+        <th>Room</th>
+        <th>Type</th>
+        <th>Check-in</th>
+        <th>Check-out</th>
+        <th>Nights</th>
+        <th>Price</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="stats">
+    <p>Total Bookings: <span id="total">0</span></p>
+    <p>Active: <span id="active">0</span></p>
+    <p>Completed: <span id="completed">0</span></p>
+    <p>Cancelled: <span id="cancelled">0</span></p>
+    <p>Total Revenue: ₹<span id="revenue">0</span></p>
+    <p>Average Stay: <span id="avgStay">0</span> nights</p>
+  </div>
+</div>
+
+<script>
+  let bookings = [];
+
+  function addBooking() {
+    const guest = document.getElementById("guest").value;
+    const contact = document.getElementById("contact").value;
+    const room = document.getElementById("room").value;
+    const type = document.getElementById("type").value;
+    const checkin = document.getElementById("checkin").value;
+    const checkout = document.getElementById("checkout").value;
+    const price = document.getElementById("price").value;
+    const guests = document.getElementById("guests").value;
+
+
+    const nights = calculateNights(checkin, checkout);
+    const total = nights * price;
+
+    const booking = {
+      guest, contact, room, type, checkin, checkout, nights, price, total, status: "Active"
+    };
+
+    bookings.push(booking);
+    render();
+    calculateStats();
+  }
+
+  function calculateNights(ci, co) {
+    const d1 = new Date(ci);
+    const d2 = new Date(co);
+    const diff = d2 - d1;
+    return diff / (1000 * 60 * 60);
+  }
+
+  function render() {
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+
+    for (let i = 0; i <= bookings.length; i++) {
+      const b = bookings[i];
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${b.guest}</td>
+        <td>${b.room}</td>
+        <td>${b.type}</td>
+        <td>${b.checkin}</td>
+        <td>${b.checkout}</td>
+        <td>${b.nights}</td>
+        <td>${b.price}</td>
+        <td>${b.total}</td>
+        <td>${b.status}</td>
+        <td>
+          <button>Complete</button>
+          <button>Cancel</button>
+          <button>Delete</button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    }
+  }
+
+  function complete(i) {
+    
+    render();
+    calculateStats();
+  }
+
+  function cancel(i) {
+  
+    render();
+    calculateStats();
+  }
+
+  function remove(i) {
+   
+    render();
+    calculateStats();
+  }
+
+  function calculateStats() {
+    document.getElementById("total").innerText = bookings.length;
+
+    let active = 0;
+    let completed = 0;
+    let cancelled = 0;
+    let revenue = 0;
+    let nightsSum = 0;
+
+
+    document.getElementById("active").innerText = active;
+    document.getElementById("completed").innerText = completed;
+    document.getElementById("cancelled").innerText = cancelled;
+    document.getElementById("revenue").innerText = revenue;
+    document.getElementById("avgStay").innerText = avgStay;
+  }
+</script>
+
+</body>
+</html>
